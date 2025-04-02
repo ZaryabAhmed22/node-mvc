@@ -1,7 +1,21 @@
 const fs = require("fs");
 const path = require("path");
 
-const getProductsFromFile = () => {};
+const p = path.join(
+  path.dirname(process.mainModule.filename),
+  "data",
+  "products.json"
+);
+
+const getProductsFromFile = (cb) => {
+  fs.readFile(p, (err, fileContent) => {
+    if (err) {
+      return cb([]);
+    } else {
+      cb(JSON.parse(fileContent));
+    }
+  });
+};
 
 // const products = []; // commenting this because now we will store the products in a file
 module.exports = class Product {
@@ -12,21 +26,8 @@ module.exports = class Product {
   save() {
     // "this" refers to the object created by this class
     // products.push(this);
-
-    const p = path.join(
-      path.dirname(process.mainModule.filename),
-      "data",
-      "products.json"
-    );
-
-    fs.readFile(p, (err, fileContent) => {
-      let products = [];
-      if (!err) {
-        products = JSON.parse(fileContent);
-      }
-
+    getProductsFromFile((products) => {
       products.push(this);
-
       fs.writeFile(p, JSON.stringify(products), (err) => {
         console.log(err);
       });
@@ -35,19 +36,7 @@ module.exports = class Product {
 
   // static means that the function can be called on the class directly rather than on any instance
   static fetchAll(cb) {
-    const p = path.join(
-      path.dirname(process.mainModule.filename),
-      "data",
-      "products.json"
-    );
-
-    fs.readFile(p, (err, fileContent) => {
-      if (err) {
-        cb([]);
-      } else {
-        cb(JSON.parse(fileContent));
-      }
-    });
+    getProductsFromFile(cb);
     // return products;
   }
 };
