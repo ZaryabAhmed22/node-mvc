@@ -13,8 +13,10 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
   //   products.push({ title: req.body.title });
 
+  const { title, imageUrl, description, price } = req.body;
+
   // creating an instance
-  const product = new Product(req.body.title);
+  const product = new Product(title, imageUrl, description, price);
   product.save();
   res.redirect("/");
 };
