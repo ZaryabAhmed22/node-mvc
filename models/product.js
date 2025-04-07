@@ -12,7 +12,6 @@ const getProductsFromFile = (cb) => {
     if (err || !fileContent) {
       cb([]);
     } else {
-      console.log(JSON.parse(fileContent));
       cb(JSON.parse(fileContent));
     }
   });
@@ -30,6 +29,7 @@ module.exports = class Product {
   save() {
     // "this" refers to the object created by this class
     // products.push(this);
+    this.id = Math.random().toString();
     getProductsFromFile((products) => {
       products.push(this);
       fs.writeFile(p, JSON.stringify(products), (err) => {
@@ -42,5 +42,12 @@ module.exports = class Product {
   static fetchAll(cb) {
     getProductsFromFile(cb);
     // return products;
+  }
+
+  static fetchById(id, cb) {
+    getProductsFromFile((products) => {
+      const product = products.find((product) => product.id === id);
+      cb(product);
+    });
   }
 };
